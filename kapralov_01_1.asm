@@ -17,7 +17,6 @@ start:
    outintln eax,, ', sum with sign='
 
    mov eax, X
-   mov ebx, Y
    sub eax, ebx
    outword eax,, 'sub nosign='
    outintln eax,, ', sub with sign='
