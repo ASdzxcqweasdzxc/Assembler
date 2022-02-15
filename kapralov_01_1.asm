@@ -1,30 +1,27 @@
 include console.inc
+
 .data
-X dd 0
-Y dd 0
+X dd 0	;comment
+Y dd 0	;comment
 
 .code
 start:
-   outstr 'first number:'
-   inintln X
-   outstr 'second number:'
-   inintln Y
+   
+   inintln X, 'first number:'
+   inintln Y, 'second number:'
    
    mov eax, X
    mov ebx, Y
    add eax, ebx
-   outstr 'sum nosign='
-   outword eax
-   outstr ', sum with sign='
-   outnumln eax
+   outword eax,, 'sum nosign='
+   outintln eax,, ', sum with sign='
 
    mov eax, X
    mov ebx, Y
    sub eax, ebx
-   outstr 'sub nosign='
-   outword eax
-   outstr ', sub with sign='
-   outnumln eax
+   outword eax,, 'sub nosign='
+   outintln eax,, ', sub with sign='
+   
    pause 'press any button to continue'
    exit
 end start
