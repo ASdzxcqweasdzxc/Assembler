@@ -1,57 +1,58 @@
 include console.inc
 
 .data
-x dw 32101		;for a
-y dw 25732		;for a
-yh db 0;		for b
-yl db 0;		for b
-z dd 0;			for b
-x1 dd 0;		for b
+x dw 30000;32101;		for a
+y dw 30000;25732;		for a
+z dd 0;
+zw dw 0;		supply word
+yl db 0;
+yh db 0;
+x1 dw 0
 
 .code
 start:
    
-   ;got two words bx (bh-bl), cx (ch-cl) 
+   ;z0
    mov bx, x;				
    mov cx, y;				
    xor eax, eax;			clean eax
-
    mov al, cl;				move cl (1st byte) part of number to al
    mul bl;					Z0:= bl * cl
-   ;outintln al,, '16?='
-   push eax;				move Z0 to stack
-   xor eax, eax;			clean eax
-   ;got 1st result at stack
-   mov al, ch;				move ch (2nd byte) part of number to ah
+   mov word ptr z, ax;		move Z0 to stack
+   ;outintln z,, 'z0='
+   
+   ;z1
+   ;xor eax, eax;			clean eax
+   mov al, ch;				move cl (1st byte) part of number to al
    mul bl;					Z1:= bl * ch
-   shl eax, 8;				moved Z1 to correct place
-   push eax;				move Z1 to stack
-   xor eax, eax;			clean eax
-   ;got 2nd result at stack
-   mov bl, bh;				move bh to lower part
-   mov al, cl;				move cl for multiplication
-   mul bl;					Z2:= bh * cl
-   shl eax, 8;				moved Z1 to correct place
-   push eax;				move Z2 to stack
-   xor eax, eax;			clean eax
-   ;got 3rd result at stack
-   mov al, ch
-   mul bl;					Z3:= bh * ch
-   ;got 4th result at stack
-   shl eax, 16;				moved Z3 to correct place
-   xor ebx, ebx;			clean ebx
-
-   pop ebx;					take Z2 from stack (Z2:= bh * cl)
-   add eax, ebx;			Z:= Z3 + Z2
-
-   pop ebx;					take Z1 from stack (Z1:= bl * ch)
-   add eax, ebx;			Z:= Z + Z1
+   mov dx, word ptr z + 1;	take 2nd and 3rd bytes from z
+   add dx, ax;				collect z1 in dx
+   xor bl, bl;				prepare bl for CF
+   adc bl, 0;				bl:= 0 + CF
+   ;mov bl, al
+   ;outintln z,, 'z+z1='
    
-   pop ebx;					take Z0 from stack (Z0:= bl * cl)
-   add eax, ebx;			Z:= Z + Z0
+   ;z2
+   xor eax, eax;			clean eax
+   mov al, cl;				move cl (1st byte) part of number to al
+   mul bh;					Z2:= cl * bh
+   add dx, ax;				collect z2 in dx
+   mov word ptr z + 1, dx;	move z1+z2 to 2nd and 3rd byte of z
+   adc bl, 0;				bl:= bl + CF
+   mov byte ptr z + 3, bl;	move bl to 4th byte of z
+   ;outintln z,, 'z+z2='
    
+   
+   ;z3
+   xor eax, eax;			clean eax
+   mov al, ch;				move cl (1st byte) part of number to al
+   mul bh;					Z3:= ch * bh
+   mov dx, word ptr z + 2;	move 3rd and 4th bytes of z to dx
+   add ax, dx;				z3:= z3 + dx
+   mov word ptr z + 2, ax;	move z3 to 3rd and 4th bytes of z
+
    outstrln 'a)'
-   outintln eax,, 'eax='
+   outintln z,, 'z='
    
    xor eax, eax;			prepare eax for division
    
@@ -68,10 +69,10 @@ start:
    ;outintln dx,, 'ax='
    ;outintln bx,, 'bx='
    div bx
-   mov x1, eax
+   mov x1, ax
 
-   outstrln 'b)'
-   outintln bx,, 'Y='
+   ;outstrln 'b)'
+   ;outintln bx,, 'Y='
    outintln x1,, 'x1='
    
    pause 'press any button to continue'
