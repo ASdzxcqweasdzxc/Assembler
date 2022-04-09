@@ -1,10 +1,10 @@
 include console.inc
 
 .data
-x dw 30000;32101;		for a
-y dw 30000;25732;		for a
+x dw 60000;32101;		for a
+y dw 60000;25732;		for a
 z dd 0;
-zw dw 0;		supply word
+;zw dw 0;		supply word
 yl db 0;
 yh db 0;
 x1 dw 0
@@ -52,28 +52,19 @@ start:
    mov word ptr z + 2, ax;	move z3 to 3rd and 4th bytes of z
 
    outstrln 'a)'
-   outintln z,, 'z='
+   outwordln z,, 'z='
    
-   xor eax, eax;			prepare eax for division
+   mov ax, word ptr z;			prepare eax for division
+   mov dx, word ptr [z + 2];			prepare eax for division
+   mov bx, y;
    
-   inintln z, 'Please enter positive double word: '
-   inintln yl, 'Please enter low part of Y (YL): '
-   inintln yh, 'Please enter high part of Y (YH): '
-   
-   mov ax, word ptr z;		move lower part from z to ax
-   mov dx, word ptr z + 2;	move higher part from z to dx
-   
-   mov bh, yh;				making word from bytes
-   mov bl, yl;				making word from bytes
-   ;outintln ax,, 'ax='
-   ;outintln dx,, 'ax='
-   ;outintln bx,, 'bx='
+   outwordln bx,, 'divider='
    div bx
    mov x1, ax
 
    ;outstrln 'b)'
    ;outintln bx,, 'Y='
-   outintln x1,, 'x1='
+   outwordln x1,, 'x1='
    
    pause 'press any button to continue'
    exit
